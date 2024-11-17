@@ -12,41 +12,6 @@ import UserHome from "./pages/UserHomePage";
 import Navbar from "./components/Navbar";
 
 function App() {
-<<<<<<< HEAD
-
-  return (
-    <div>
-=======
-  //testing backend frontend connection with temp function to grab product table
-  const [data, setData] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/get/product");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        setData(result); //if valid response then set the use state
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        console.log("successfully fetched the backend text");
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  /*
-      <div>
-      <p>{data.message}abc</p>
->>>>>>> 5f1b20082f985aaba3c3214d5f12d7238da30b04
-    </div>
-  */
-
   return (
     <Router>
       <div>
