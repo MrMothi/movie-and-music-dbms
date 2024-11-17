@@ -1,16 +1,25 @@
 const express = require('express');    //Express import for CRUD API
 const oracledb = require('oracledb');   //oracle DB import for connection to oracle 12c database
+const cors = require('cors');  //importing cors for cross origin resource sharing
 const app = express();   //creating an express application
 require('dotenv').config(); //importing the env library
 const PORT = process.env.BACKEND_PORT;  //setting the server port to the environment variable
 
+app.use(cors()); // enabling cors
+app.use(express.json()); // getting express json reader functionality
 
-
-
+//default server backend page
 app.get('/', (req, res) => {
     res.send('Movie and Music DBMS')
 })
 
+
+app.get('/get/product', (req, res) => { 
+    res.json({ message: 'Hello from the backend!' }); 
+});
+
+
+//setting the port to which the server listens to for requests
 app.listen(PORT, 
     () => { console.log(`listen to port ${PORT}`) }
 )
