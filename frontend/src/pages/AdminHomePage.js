@@ -1,7 +1,11 @@
 import React from "react";
 
-function Home() {
-  return <div>Admin Home</div>;
+function AdminHomePage() {
+  return (
+    <div>
+      <h1>Welcome Admin</h1>
+    </div>
+  );
 }
 
-export default Home;
+export default AdminHomePage;
