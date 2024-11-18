@@ -13,11 +13,11 @@ const Login = () => {
 
     // Temporary users
     if (username === "admin1" && password === "adminpassword") {
-      navigate("/AdminHome");
+      navigate("/Admin");
     }
 
     if (username === "user1" && password === "userpassword") {
-      navigate("/UserHome");
+      navigate("/User");
     } else {
       setError("Invalid Credentials");
     }
