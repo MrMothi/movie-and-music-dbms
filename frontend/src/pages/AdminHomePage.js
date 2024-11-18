@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import CustomerTableForm from "../components/customerTableForm";
 import ProductTableForm from "../components/productTableForm";
 import VendorTableForm from "../components/vendorTableForm";
+import PurchaseTableForm from "../components/purchaseTableForm";
+import ReviewTableForm from "../components/ReviewTableForm";
+import MusicTableForm from "../components/musicTableForm";
+import MovieTableForm from "../components/movieTableForm";
 
 function AdminHomePage() {
   const [selectedTable, setSelectedTable] = useState("");
@@ -28,6 +32,10 @@ function AdminHomePage() {
         {selectedTable === "CUSTOMER" && <CustomerTableForm />}
         {selectedTable === "PRODUCT" && <ProductTableForm />}
         {selectedTable === "VENDOR" && <VendorTableForm />}
+        {selectedTable === "REVIEW" && <ReviewTableForm />}
+        {selectedTable === "PURCHASE" && <PurchaseTableForm />}
+        {selectedTable === "MUSIC" && <MusicTableForm />}
+        {selectedTable === "MOVIE" && <MovieTableForm />}
       </div>
     </div>
   );

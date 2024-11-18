@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
-function ProductTableForm() {
+function MusicTableForm() {
   const [action, setAction] = useState("CREATE");
   const [productId, setProductId] = useState("");
-  const [productType, setProductType] = useState("");
-  const [rating, setRating] = useState("");
-  const [price, setPrice] = useState("");
-  const [vendorId, setVendorId] = useState("");
+  const [title, setTitle] = useState("");
+  const [genre, setGenre] = useState("");
+  const [artist, setArtist] = useState("");
+  const [features, setFeatures] = useState("");
+  const [album, setAlbum] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ function ProductTableForm() {
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>
-        <h3>Product Table</h3>
+        <h3>Music Table</h3>
 
         <label>Action: </label>
         <select value={action} onChange={(e) => setAction(e.target.value)}>
@@ -24,39 +25,46 @@ function ProductTableForm() {
           <option value="UPDATE">UPDATE</option>
         </select>
 
-        <label>Product_ID:</label>
+        <label>Product ID:</label>
         <input
           type="text"
           onChange={(e) => setProductId(e.target.value)}
           value={productId}
         />
 
-        <label>Product_Type:</label>
+        <label>Title:</label>
         <input
           type="text"
-          onChange={(e) => setProductType(e.target.value)}
-          value={productType}
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
         />
 
-        <label>Rating:</label>
+        <label>Genre:</label>
         <input
           type="text"
-          onChange={(e) => setRating(e.target.value)}
-          value={rating}
+          onChange={(e) => setGenre(e.target.value)}
+          value={genre}
         />
 
-        <label>Price:</label>
+        <label>Artist:</label>
         <input
           type="text"
-          onChange={(e) => setPrice(e.target.value)}
-          value={price}
+          onChange={(e) => setArtist(e.target.value)}
+          value={artist}
         />
 
-        <label>Vendor_ID:</label>
+        <label>Features:</label>
         <input
           type="text"
-          onChange={(e) => setVendorId(e.target.value)}
-          value={vendorId}
+          onChange={(e) => setFeatures(e.target.value)}
+          value={features}
+        />
+
+        <label>Album:</label>
+        <input
+          type="text"
+          onChange={(e) => setAlbum(e.target.value)}
+          value={album}
         />
 
         <button type="submit">Submit</button>
@@ -65,4 +73,4 @@ function ProductTableForm() {
   );
 }
 
-export default ProductTableForm;
+export default MusicTableForm;

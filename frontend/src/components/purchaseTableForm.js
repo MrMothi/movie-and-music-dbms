@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-function ProductTableForm() {
+function PurchaseTableForm() {
   const [action, setAction] = useState("CREATE");
+  const [purchaseId, setPurchaseId] = useState("");
   const [productId, setProductId] = useState("");
-  const [productType, setProductType] = useState("");
-  const [rating, setRating] = useState("");
+  const [customerId, setCustomerId] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
   const [price, setPrice] = useState("");
-  const [vendorId, setVendorId] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ function ProductTableForm() {
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>
-        <h3>Product Table</h3>
+        <h3>Purchase Table</h3>
 
         <label>Action: </label>
         <select value={action} onChange={(e) => setAction(e.target.value)}>
@@ -24,39 +24,40 @@ function ProductTableForm() {
           <option value="UPDATE">UPDATE</option>
         </select>
 
-        <label>Product_ID:</label>
+        <label>Purchase ID:</label>
+        <input
+          type="text"
+          onChange={(e) => setPurchaseId(e.target.value)}
+          value={purchaseId}
+        />
+
+        <label>Product ID:</label>
         <input
           type="text"
           onChange={(e) => setProductId(e.target.value)}
           value={productId}
         />
 
-        <label>Product_Type:</label>
+        <label>Customer ID:</label>
         <input
           type="text"
-          onChange={(e) => setProductType(e.target.value)}
-          value={productType}
+          onChange={(e) => setCustomerId(e.target.value)}
+          value={customerId}
         />
 
-        <label>Rating:</label>
+        <label>Purchase Date:</label>
         <input
-          type="text"
-          onChange={(e) => setRating(e.target.value)}
-          value={rating}
+          type="date"
+          onChange={(e) => setPurchaseDate(e.target.value)}
+          value={purchaseDate}
         />
 
         <label>Price:</label>
         <input
-          type="text"
+          type="number"
+          step="0.01"
           onChange={(e) => setPrice(e.target.value)}
           value={price}
-        />
-
-        <label>Vendor_ID:</label>
-        <input
-          type="text"
-          onChange={(e) => setVendorId(e.target.value)}
-          value={vendorId}
         />
 
         <button type="submit">Submit</button>
@@ -65,4 +66,4 @@ function ProductTableForm() {
   );
 }
 
-export default ProductTableForm;
+export default PurchaseTableForm;

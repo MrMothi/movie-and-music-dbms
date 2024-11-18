@@ -16,7 +16,7 @@ function CustomerTableForm() {
 
   return (
     <div className="formContainer">
-      <form className="customerForm" onSubmit={handleSubmit}>
+      <form className="tableForm" onSubmit={handleSubmit}>
         <h3>Customer Table</h3>
 
         <label>Action: </label>

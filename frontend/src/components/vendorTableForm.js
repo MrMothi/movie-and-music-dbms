@@ -14,7 +14,7 @@ function VendorTableForm() {
 
   return (
     <div className="formContainer">
-      <form className="vendorForm" onSubmit={handleSubmit}>
+      <form className="tableForm" onSubmit={handleSubmit}>
         <h3>External Vendor Table</h3>
 
         <label>Action: </label>
