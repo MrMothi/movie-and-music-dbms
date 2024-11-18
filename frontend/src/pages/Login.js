@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/Form.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -10,14 +11,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Temporary users
     if (username === "admin1" && password === "adminpassword") {
-      navigate("/AdminHome");
+      navigate("/Admin");
     }
 
     if (username === "user1" && password === "userpassword") {
-      navigate("/UserHome");
+      navigate("/User");
     } else {
-      setError("Invalid creds");
+      setError("Invalid Credentials");
     }
   };
 
@@ -40,10 +42,8 @@ const Login = () => {
           value={password}
         />
 
-        <div className="linkToSignup">
-          <label>Don't have an account?</label>
-          <Link to="/signup">Sign up!</Link>
-        </div>
+        <button>Log in</button>
+
         {error && <div className="error">{error}</div>}
       </form>
     </div>
