@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 
 
-//ORACLE CONNECTION AND DISCONNECT=============================================================================
+//ORACLE12C CONNECTION AND DISCONNECT=============================================================================
 //not implementing the process pool strategy for database connections since there will only be 1 server instance running for a single frontend
 async function initOracleConnection() { 
      
@@ -75,7 +75,7 @@ app.get('/', (req, res) => {
 })
 
 
-//FETCH COMMANDS=============================================================================
+//CRUD/FETCH COMMANDS=============================================================================
 
 //READ/GET------------------------------------------------------------------------------------
 //7 functions, 1 for each table a generic select all/*
@@ -109,7 +109,7 @@ app.post('/create/customer', async (req, res) => {
             [custid, firstname, lastname, email, phonenumber, address],
             { autocommit: true } 
         ); 
-        await req.oracleConnection.commit();
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
 
         console.log("New row created in Customer Table with ID: ", custid);
         res.status(201).json({message : "Customer created", result});    //sending back success message
@@ -129,6 +129,122 @@ app.post('/create/customer', async (req, res) => {
 //     "phonenumber": "phone1",
 //     "address": "address"
 //   }
+
+
+
+
+
+
+//UPDATE/PUT------------------------------------------------------------------------------------
+//7 functions 1 for each table
+
+//will probably need to call a get request for the other data then change only the ones 
+//which are provided by the user ie not null (simmilar to create at that point for the JSON)
+
+//update customer  (requires customer ID)
+app.put('/update/customer', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { custid, firstname, lastname, email, phonenumber, address } = req.body;
+
+        //checking setting the input values to their current values in the db if they are left null by the user
+        //first getting the current values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM customer WHERE customer_id = :custid', [custid]);
+
+        // console.log("CHECKING CUSTOMER", checkold.rows); // debug
+        const checkRows = checkold.rows;   //getting the rows of the result, since other stuff is uneccesary
+        // console.log(checkRows[0][1]);  //gets the firstname DELETE THIS
+        // res.json(checkRows);
+
+        //checking and setting each value accordingly, 
+        //custid always is present and remains the same
+        //if user input is null, use old value
+        //if user input is not null, then use their input
+        let firstnamenew = firstname;
+        let lastnamenew = lastname;
+        let emailnew = email;
+        let phonenumbernew = phonenumber;
+        let addressnew = address;
+        if (!firstname){
+            firstnamenew = checkRows[0][1];
+        }
+        if (!lastname){
+            lastnamenew = checkRows[0][2];
+        }
+        if (!email){
+            emailnew = checkRows[0][3];
+        }
+        if (!phonenumber){
+            phonenumbernew = checkRows[0][4];
+        }
+        if (!address){
+            addressnew = checkRows[0][5];
+        }
+        
+        // console.log(custid, firstnamenew, lastnamenew, emailnew, phonenumbernew, addressnew);      //for debug
+
+        // running the sql command to update an entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'UPDATE customer SET first_name = :firstnamenew, last_name = :lastnamenew, email = :emailnew, phone_number = :phonenumbernew, address = :addressnew WHERE customer_id = :custid', 
+            { 
+                custid: custid,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                firstnamenew: firstnamenew,
+                lastnamenew: lastnamenew,
+                emailnew: emailnew,
+                phonenumbernew: phonenumbernew,
+                addressnew: addressnew
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+        console.log("Updated Row in Customer Table with ID: ", custid);
+        res.status(201).json({message : "Customer Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
+// Expected object for above, everything but custID can be null
+// {
+//     "custid": 21,
+//     "firstname": "Benjamin",
+//     "lastname": null,
+//     "email": "email21",
+//     "phonenumber": "000-000-0021",
+//     "address": "address21"
+//   }
+
+
+
+
+//DELETE------------------------------------------------------------------------------------
+// 7 functions 1 for each table, will take in the primary key for the row to delete it
+
+//delete customer
+app.delete('/delete/customer', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { custid } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM customer WHERE customer_id = :custid',
+            [custid],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        console.log("Deleted row in customer table with ID: ", custid);
+        res.status(201).json({message : "Deleted Customer", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// associated JSON
+// { "custid":21 }
 
 
 
