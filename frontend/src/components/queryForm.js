@@ -2,46 +2,68 @@ import React, { useState } from "react";
 
 const QueryForm = () => {
   const [query, setQuery] = useState("");
-  const [queryJson, setQueryJson] = useState(null); // State to store the query as JSON
+  const [queryJson, setQueryJson] = useState(null); // State to store the query results as JSON
+  const [error, setError] = useState(null); // State to store any errors
 
   const handleInputChange = (event) => {
-    setQuery(event.target.value);
+    setQuery(event.target.value); // Update query state as the user types
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (event) => {
+    console.log('Query:', query);
+    event.preventDefault(); // Prevent form reload
+  
+    try {
+      const response = await fetch('/api/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query }), // Send the query to the backend
+      });
 
-    // Create a JSON object with the query
-    const queryObject = { query: query.trim() }; // Trim spaces to clean up the query
-
-    // Save the JSON object in state
-    setQueryJson(queryObject);
-
-    // Log the JSON object
-    console.log("Query submitted as JSON:", JSON.stringify(queryObject));
-
-    // Add additional logic to handle the JSON object, e.g., sending it to a backend
+      if (response.ok) {
+        const data = await response.json();
+        setQueryJson(data); // Store the query result in state
+        setError(null); // Clear any previous errors
+      } else {
+        setError(`Failed to execute query: ${response.statusText}`);
+        setQueryJson(null); // Clear previous results on error
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('An error occurred while executing the query.');
+      setQueryJson(null); // Clear previous results on error
+    }
   };
 
   return (
     <div>
+      {/* Query Input Form */}
       <form onSubmit={handleSubmit}>
         <label htmlFor="queryInput">Enter your query:</label>
         <textarea
-          className="queryInput"
           id="queryInput"
           value={query}
           onChange={handleInputChange}
           placeholder="Type your query here..."
           rows="4"
+          required
         />
         <button type="submit">Submit</button>
       </form>
+
+      {/* Display Submitted Query */}
       <p>Your query: {query}</p>
+
+      {/* Display Error */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {/* Display Query Results */}
       {queryJson && (
         <div>
-          <h4>Query JSON:</h4>
-          <code>{JSON.stringify(queryJson)}</code>
+          <h4>Query Results:</h4>
+          <pre>{JSON.stringify(queryJson, null, 2)}</pre> {/* Pretty-print the query result */}
         </div>
       )}
     </div>

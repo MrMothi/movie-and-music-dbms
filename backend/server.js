@@ -4,10 +4,13 @@ const cors = require('cors');  //importing cors for cross origin resource sharin
 const app = express();   //creating an express application
 require('dotenv').config(); //importing the env library
 const PORT = process.env.BACKEND_PORT;  //setting the server port to the environment variable
+const bodyParser = require('body-parser');
+
 
 //MIDDLEWARE=============================================================================
 app.use(cors()); // enabling cors
 app.use(express.json()); // getting express json reader functionality
+app.use(bodyParser.json());
 
 let oracleDBconnection;
 //injecting the oracle database connection variable into the req object of the nodejs server
@@ -35,7 +38,6 @@ async function initOracleConnection() {
         // });
         
         app.locals.oracleConnection = oracleDBconnection
-
         // Execute a simple query 
         // const result = await req.oracleConnection.execute('SELECT * FROM customer'); 
         // console.log(result.rows); 
@@ -73,6 +75,26 @@ process.once('SIGTERM', closeOracleConnection).once('SIGINT', closeOracleConnect
 app.get('/', (req, res) => {
     res.send('Movie and Music DBMS')
 })
+
+app.post('/api/query', async (req, res) => {
+    const { query } = req.body;
+    console.log('Received query:', query);
+    if (!query) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+  
+    try {
+      // Execute the SQL query
+      const result = await oracleDBconnection.execute(query);
+  
+      // Send the result back as JSON
+      res.json(result.rows); // `result.rows` will contain the result of the query
+  
+    } catch (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Failed to execute query' });
+    }
+  });
 
 
 //CRUD/FETCH COMMANDS=============================================================================
@@ -300,15 +322,6 @@ BEYOND THIS POINT IS OLD CODE OR NOTES WE DONT NEED=============================
 //     } 
 // } 
 // run();
-
-
-
-
-
-
-
-
-
 
 
 
