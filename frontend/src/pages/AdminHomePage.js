@@ -6,6 +6,7 @@ import PurchaseTableForm from "../components/purchaseTableForm";
 import ReviewTableForm from "../components/ReviewTableForm";
 import MusicTableForm from "../components/musicTableForm";
 import MovieTableForm from "../components/movieTableForm";
+import QueryForm from "../components/queryForm";
 
 function AdminHomePage() {
   const [selectedTable, setSelectedTable] = useState("");
@@ -28,7 +29,6 @@ function AdminHomePage() {
           <option value="MUSIC">MUSIC</option>
           <option value="MOVIE">MOVIE</option>
         </select>
-
         {selectedTable === "CUSTOMER" && <CustomerTableForm />}
         {selectedTable === "PRODUCT" && <ProductTableForm />}
         {selectedTable === "VENDOR" && <VendorTableForm />}
@@ -36,6 +36,14 @@ function AdminHomePage() {
         {selectedTable === "PURCHASE" && <PurchaseTableForm />}
         {selectedTable === "MUSIC" && <MusicTableForm />}
         {selectedTable === "MOVIE" && <MovieTableForm />}
+      </div>
+      <div>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <QueryForm></QueryForm>
       </div>
     </div>
   );
