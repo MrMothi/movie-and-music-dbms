@@ -35,6 +35,7 @@ const QueryForm = () => {
       setError('An error occurred while executing the query.');
       setQueryJson(null); // Clear previous results on error
     }
+
   };
 
   return (
@@ -62,9 +63,33 @@ const QueryForm = () => {
       {/* Display Query Results */}
       {queryJson && (
         <div>
-          <h4>Query Results:</h4>
-          <pre>{JSON.stringify(queryJson, null, 2)}</pre> {/* Pretty-print the query result */}
-        </div>
+        <h4>Query Results:</h4>
+
+        {/* Render the table if headers and rows exist */}
+        {queryJson.headers && queryJson.rows && (
+          <table border="1">
+            <thead>
+              <tr>
+                {queryJson.headers.map((header, index) => (
+                  <th key={index}>{header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {queryJson.rows.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {queryJson.headers.map((header, colIndex) => (
+                    <td key={colIndex}>{row[header]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {/* Optionally display the raw JSON */}
+        <pre>{JSON.stringify(queryJson, null, 2)}</pre>
+      </div>
       )}
     </div>
   );

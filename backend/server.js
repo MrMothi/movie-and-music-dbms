@@ -79,22 +79,34 @@ app.get('/', (req, res) => {
 app.post('/api/query', async (req, res) => {
     const { query } = req.body;
     console.log('Received query:', query);
+
     if (!query) {
-      return res.status(400).json({ error: 'Query is required' });
+        return res.status(400).json({ error: 'Query is required' });
     }
-  
+
     try {
-      // Execute the SQL query
-      const result = await oracleDBconnection.execute(query);
-  
-      // Send the result back as JSON
-      res.json(result.rows); // `result.rows` will contain the result of the query
-  
+        // Execute the SQL query
+        const result = await oracleDBconnection.execute(query);
+
+        // Extract headers (column names) from the metadata
+        const headers = result.metaData.map((col) => col.name);
+
+        // Format rows as an array of objects with header-value pairs
+        const rows = result.rows.map((row) => {
+            return row.reduce((acc, value, index) => {
+                acc[headers[index]] = value;
+                return acc;
+            }, {});
+        });
+
+        // Send the response with headers and rows
+        res.json({ headers, rows });
     } catch (error) {
-      console.error('Error executing query:', error);
-      res.status(500).json({ error: 'Failed to execute query' });
+        console.error('Error executing query:', error);
+        res.status(500).json({ error: 'Failed to execute query' });
     }
-  });
+});
+
 
 
 //CRUD/FETCH COMMANDS=============================================================================
