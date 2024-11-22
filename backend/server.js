@@ -76,6 +76,10 @@ app.get('/', (req, res) => {
     res.send('Movie and Music DBMS')
 })
 
+
+//OTHER FUNCTIONS=============================================================================
+//SQL query input to result function
+//Later might want to not allow any delete table queries, currently allowing for both view and table
 app.post('/api/query', async (req, res) => {
     const { query } = req.body;
     console.log('Received query:', query);
@@ -113,10 +117,42 @@ app.post('/api/query', async (req, res) => {
 
 //READ/GET------------------------------------------------------------------------------------
 //7 functions, 1 for each table a generic select all/*
+
+
+//get external vendor table
+app.get('/get/external-vendor', async (req, res) => { 
+    try{
+        const result = await req.oracleConnection.execute('SELECT * FROM external_vendor'); 
+        // console.log("RESULT ROWS",result.rows);
+        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
+        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
 //get product table
+app.get('/get/product', async (req, res) => { 
+    try{
+        const result = await req.oracleConnection.execute('SELECT * FROM product'); 
+        // console.log("RESULT ROWS",result.rows);
+        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
+        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
+
+//get customer table
+//original function
 app.get('/get/customer', async (req, res) => { 
     try{
-        console.log(req.oracleConnection)
+        // console.log(req.oracleConnection)
         const result = await req.oracleConnection.execute('SELECT * FROM customer'); 
         // const result = await app.locals.oracleConnection.execute('SELECT * FROM customer');    //if using app locals variable
         console.log("RESULT ROWS",result.rows); // can comment out later
@@ -129,9 +165,128 @@ app.get('/get/customer', async (req, res) => {
 });
 
 
+//get review table
+app.get('/get/review', async (req, res) => { 
+    try{
+        const result = await req.oracleConnection.execute('SELECT * FROM review'); 
+        // console.log("RESULT ROWS",result.rows);
+        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
+        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
+//get purchase table
+app.get('/get/purchase', async (req, res) => { 
+    try{
+        const result = await req.oracleConnection.execute('SELECT * FROM purchase'); 
+        // console.log("RESULT ROWS",result.rows);
+        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
+        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
+//get music table
+app.get('/get/music', async (req, res) => { 
+    try{
+        const result = await req.oracleConnection.execute('SELECT * FROM music'); 
+        // console.log("RESULT ROWS",result.rows);
+        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
+        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
+//get movie table
+app.get('/get/movie', async (req, res) => { 
+    try{
+        const result = await req.oracleConnection.execute('SELECT * FROM movie'); 
+        // console.log("RESULT ROWS",result.rows);
+        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
+        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+
+
 
 //POST/CREATE------------------------------------------------------------------------------------
 //7 Functions 1 for each table, which links to a form submit on the frontend
+
+//Create new external_vendor
+app.post('/create/external-vendor', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { vendorid, vendorname, vendornumber, contactemail } = req.body;
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'INSERT INTO external_vendor (vendor_id, vendor_name, phone_number, contact_email) VALUES (:vendorid, :vendorname, :vendornumber, :contactemail )',
+            [vendorid, vendorname, vendornumber, contactemail ],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("New row created in External Vendor Table with ID: ", vendorid);
+        res.status(201).json({message : "External Vendor created", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "vendorid": 21,
+//     "vendorname": "abc",
+//     "vendornumber": "phone1",
+//     "contactemail": "email1"
+//   }
+
+
+//Create new product
+app.post('/create/product', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { productid, producttype, rating, price, vendorid } = req.body;
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'INSERT INTO product (product_id, product_type, rating, price, vendor_id ) VALUES (:productid, :producttype, :rating, :price, :vendorid)',
+            [ productid, producttype, rating, price, vendorid ],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("New row created in Product Table with ID: ", productid);
+        res.status(201).json({message : "Product created", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "productid": 200,
+//     "producttype": "movie",
+//     "rating": 4.6,
+//     "price": 99.99,
+//     "vendorid": 21
+//   }
+
+
 //Create new customer
 app.post('/create/customer', async (req, res) => { 
     try {
@@ -165,6 +320,129 @@ app.post('/create/customer', async (req, res) => {
 //   }
 
 
+//Create new review
+app.post('/create/review', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { review_id, product_id, customer_id, creation_date, user_review, user_rating } = req.body;
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            `INSERT INTO review (review_id, product_id, customer_id, creation_date, user_review, user_rating ) VALUES (:review_id, :product_id, :customer_id, TO_DATE(:creation_date, 'YYYY-MM-DD'), :user_review, :user_rating)`,
+            [ review_id, product_id, customer_id, creation_date, user_review, user_rating ],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("New row created in Review Table with ID: ", review_id);
+        res.status(201).json({message : "Review created", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "review_id": 200,
+//     "product_id": 1,
+//     "customer_id": 40,
+//     "creation_date": "2024-08-01",
+//     "user_review": "somereview",
+//     "user_rating": 1.4
+//   }
+
+
+//Create new purchase
+app.post('/create/purchase', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { purchase_id, product_id, customer_id, purchase_date, price } = req.body;
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            `INSERT INTO purchase ( purchase_id, product_id, customer_id, purchase_date, price ) VALUES (:purchase_id, :product_id, :customer_id, TO_DATE(:purchase_date, 'YYYY-MM-DD'), :price)`,
+            [ purchase_id, product_id, customer_id, purchase_date, price ],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("New row created in Purchase Table with ID: ", purchase_id);
+        res.status(201).json({message : "Purchase created", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "purchase_id": 200,
+//     "product_id": 2,
+//     "customer_id": 10,
+//     "purchase_date": "2024-08-01",
+//     "price": 100.99
+//   }
+
+
+//Create new music
+app.post('/create/music', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id, title, genre, artist, features, album } = req.body;
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            `INSERT INTO music ( product_id, title, genre, artist, features, album  ) VALUES (:product_id, :title, :genre, :artist, :features, :album )`,
+            [ product_id, title, genre, artist, features, album ],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("New row created in Music Table with ID: ", product_id);
+        res.status(201).json({message : "Music created", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "product_id": 200,
+//     "title": "Some title",
+//     "genre": "rock",
+//     "artist": "some singer",
+//     "features": "some other guy",
+//     "album": "some album"
+//   }
+
+
+//Create new movie
+app.post('/create/movie', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id, title, genre, director } = req.body;
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            `INSERT INTO movie ( product_id, title, genre, director ) VALUES (:product_id, :title, :genre, :director )`,
+            [ product_id, title, genre, director ],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("New row created in Movie Table with ID: ", product_id);
+        res.status(201).json({message : "Movie created", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "product_id": 200,
+//     "title": "Some movie title",
+//     "genre": "horror",
+//     "director": "some director"
+//   }
 
 
 
@@ -172,8 +450,178 @@ app.post('/create/customer', async (req, res) => {
 //UPDATE/PUT------------------------------------------------------------------------------------
 //7 functions 1 for each table
 
-//will probably need to call a get request for the other data then change only the ones 
-//which are provided by the user ie not null (simmilar to create at that point for the JSON)
+//update external_vendor (requires vendor_id)
+app.put('/update/external-vendor', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { vendorid, vendorname, vendornumber, contactemail } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM external_vendor WHERE vendor_id = :vendorid', [vendorid]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let vendornamenew = vendorname;
+        let vendornumbernew = vendornumber;
+        let contactemailnew = contactemail;
+        if (!vendorname){
+            vendornamenew = checkRows[0][1];
+        }
+        if (!vendornumber){
+            vendornumbernew = checkRows[0][2];
+        }
+        if (!contactemail){
+            contactemailnew = checkRows[0][3];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'UPDATE external_vendor SET vendor_id = :vendor_id, vendor_name = :vendor_namenew, phone_number = :vendor_numbernew, contact_email = :contact_emailnew WHERE vendor_id = :vendor_id',
+            { 
+                vendor_id: vendorid,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                vendor_namenew: vendornamenew,
+                vendor_numbernew: vendornumbernew,
+                contact_emailnew: contactemailnew,
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in External Vendor Table with ID: ", vendorid);
+        res.status(201).json({message : "External Vendor Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// Expected object for above
+//  {
+//     "vendorid": 21,
+//     "vendorname": "abc",
+//     "contactnumber": "phone1",
+//     "contactemail": "email1"
+//   }
+
+
+//update product
+app.put('/update/product', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { productid, producttype, rating, price, vendorid } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM product WHERE product_id = :productid', [productid]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let producttypenew = producttype;
+        let ratingnew = rating;
+        let pricenew = price;
+        let vendoridnew = vendorid;
+        if (!producttype){
+            producttypenew = checkRows[0][1];
+        }
+        if (!rating){
+            ratingnew = checkRows[0][2];
+        }
+        if (!price){
+            pricenew = checkRows[0][3];
+        }
+        if (!vendorid){
+            vendoridnew = checkRows[0][3];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'UPDATE product SET product_type = :product_typenew, rating = :rating_new, price = :price_new, vendor_id = :vendor_idnew WHERE product_id = :product_id',
+            { 
+                product_id: productid,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                product_typenew: producttypenew,
+                rating_new: ratingnew,
+                price_new: pricenew,
+                vendor_idnew: vendoridnew
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in Product Table with ID: ", vendorid);
+        res.status(201).json({message : "Product Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// Expected object for above
+//  {
+//     "productid": 200,
+//     "producttype": "movie",
+//     "rating": 4.6,
+//     "price": 99.99,
+//     "vendorid": 21
+//   }
+
+
+
+//update product
+app.put('/update/product', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { productid, producttype, rating, price, vendorid } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM product WHERE product_id = :productid', [productid]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let producttypenew = producttype;
+        let ratingnew = rating;
+        let pricenew = price;
+        let vendoridnew = vendorid;
+        if (!producttype){
+            producttypenew = checkRows[0][1];
+        }
+        if (!rating){
+            ratingnew = checkRows[0][2];
+        }
+        if (!price){
+            pricenew = checkRows[0][3];
+        }
+        if (!vendorid){
+            vendoridnew = checkRows[0][3];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'UPDATE product SET product_type = :product_typenew, rating = :rating_new, price = :price_new, vendor_id = :vendor_idnew WHERE product_id = :product_id',
+            { 
+                product_id: productid,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                product_typenew: producttypenew,
+                rating_new: ratingnew,
+                price_new: pricenew,
+                vendor_idnew: vendoridnew
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in Product Table with ID: ", vendorid);
+        res.status(201).json({message : "Product Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// Expected object for above
+//  {
+//     "productid": 200,
+//     "producttype": "movie",
+//     "rating": 4.6,
+//     "price": 99.99,
+//     "vendorid": 21
+//   }
+
 
 //update customer  (requires customer ID)
 app.put('/update/customer', async (req, res) => { 
@@ -251,10 +699,297 @@ app.put('/update/customer', async (req, res) => {
 //   }
 
 
+//update review
+app.put('/update/review', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { review_id, product_id, customer_id, creation_date, user_review, user_rating } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM review WHERE review_id = :review_id', [review_id]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let product_id1 = product_id;
+        let customer_id1 = customer_id;
+        let creation_date1 = creation_date;
+        let user_review1 = user_review;
+        let user_rating1 = user_rating;
+        if (!product_id){
+            product_id1 = checkRows[0][1];
+        }
+        if (!customer_id){
+            customer_id1 = checkRows[0][2];
+        }
+        if (!creation_date){
+            creation_date1 = checkRows[0][3].toISOString().split('T')[0];  //sql returns a date object, so converting it back into a string and only taking the YYYY-MM-DD
+        }
+        if (!user_review){
+            user_review1 = checkRows[0][4];
+        }
+        if (!user_rating){
+            user_rating1 = checkRows[0][5];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            // TO_DATE(:purchase_date, 'YYYY-MM-DD')
+            `UPDATE review SET product_id = :product_id2, customer_id = :customer_id2, creation_date = TO_DATE(:creation_date2, 'YYYY-MM-DD'), user_review = :user_review2, user_rating = :user_rating2 WHERE review_id = :review_id`,
+            { 
+                review_id: review_id,
+                product_id2: product_id1,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                customer_id2: customer_id1,
+                creation_date2: creation_date1,
+                user_review2: user_review1,
+                user_rating2: user_rating1
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in Review Table with ID: ", review_id);
+        res.status(201).json({message : "Review Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// Expected object for above
+//  {
+//     "review_id": 200,
+//     "product_id": 1,
+//     "customer_id": 40,
+//     "creation_date": "2024-08-01",
+//     "user_review": "somereview",
+//     "user_rating": 1.4
+//   }
+
+
+
+//update purchase
+app.put('/update/purchase', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { purchase_id, product_id, customer_id, purchase_date, price } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM purchase WHERE purchase_id = :purchase_id', [purchase_id]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let product_id1 = product_id;
+        let customer_id1 = customer_id;
+        let purchase_date1 = purchase_date;
+        let price1 = price;
+        if (!product_id){
+            product_id1 = checkRows[0][1];
+        }
+        if (!customer_id){
+            customer_id1 = checkRows[0][2];
+        }
+        if (!purchase_date){
+            purchase_date1 = checkRows[0][3].toISOString().split('T')[0];  //sql returns a date object, so converting it back into a string and only taking the YYYY-MM-DD
+        }
+        if (!price){
+            price1 = checkRows[0][4];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            // TO_DATE(:purchase_date, 'YYYY-MM-DD')
+            `UPDATE purchase SET product_id = :product_id2, customer_id = :customer_id2, purchase_date = TO_DATE(:purchase_date2, 'YYYY-MM-DD'), price = :price2 WHERE purchase_id = :purchase_id`,
+            { 
+                purchase_id: purchase_id,
+                product_id2: product_id1,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                customer_id2: customer_id1,
+                purchase_date2: purchase_date1,
+                price2: price1,
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in Purchase Table with ID: ", purchase_id);
+        res.status(201).json({message : "Purchase Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// Expected object for above
+//  {
+//     "purchase_id": 200,
+//     "product_id": 2,
+//     "customer_id": 10,
+//     "purchase_date": "2024-08-01",
+//     "price": 100.99
+//   }
+
+
+
+//update music
+app.put('/update/music', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id, title, genre, artist, features, album } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM music WHERE product_id = :product_id', [product_id]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let product_id1 = product_id;
+        let title1 = title;
+        let genre1 = genre;
+        let artist1 = artist;
+        let features1 = features;
+        let album1 = album;
+        if (!title){
+            title1 = checkRows[0][1];
+        }
+        if (!genre){
+            genre1 = checkRows[0][2];
+        }
+        if (!artist){
+            artist1 = checkRows[0][3];
+        }
+        if (!features){
+            features1 = checkRows[0][4];
+        }
+        if (!album){
+            album1 = checkRows[0][5];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            // TO_DATE(:purchase_date, 'YYYY-MM-DD')
+            `UPDATE music SET title = :title2, genre = :genre2, artist = :artist2, features = :features2, album = :album2 WHERE product_id = :product_id`,
+            { 
+                product_id: product_id,
+                title2: title1,
+                genre2: genre1,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                artist2: artist1,
+                features2: features1,
+                album2: album1,
+
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in Music Table with ID: ", product_id);
+        res.status(201).json({message : "Music Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// Expected object for above
+//  {
+//     "product_id": 200,
+//     "title": "Some title",
+//     "genre": "rock",
+//     "artist": "some singer",
+//     "features": "some other guy",
+//     "album": "some album"
+//   }
+
+
+
+//update movie
+app.put('/update/movie', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id, title, genre, director } = req.body;
+
+        //getting current row values
+        const checkold = await req.oracleConnection.execute('SELECT * FROM movie WHERE product_id = :product_id', [product_id]);
+        const checkRows = checkold.rows; 
+
+        //setting new values to any input values that are non null, otherwise setting the null values to previous row values
+        let product_id1 = product_id;
+        let title1 = title;
+        let genre1 = genre;
+        let director1 = director;
+        if (!title){
+            title1 = checkRows[0][1];
+        }
+        if (!genre){
+            genre1 = checkRows[0][2];
+        }
+        if (!director){
+            director1 = checkRows[0][3];
+        }
+
+        // running the sql command to add a entry to the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            // TO_DATE(:purchase_date, 'YYYY-MM-DD')
+            `UPDATE movie SET title = :title2, genre = :genre2, director = :director2 WHERE product_id = :product_id`,
+            { 
+                product_id: product_id,
+                title2: title1,
+                genre2: genre1,        //need to do this formatting due to some wierd casting of this integer into a string otherwise
+                director2: director1
+
+            },
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();   //force committing the DB incase it hasnt already
+
+        console.log("Updated row in Movie Table with ID: ", product_id);
+        res.status(201).json({message : "Movie Updated", result});    //sending back success message
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// Expected object for above
+//  {
+//     "product_id": 200,
+//     "title": "Some movie title",
+//     "genre": "horror",
+//     "director": "some director"
+//   }
+
+
 
 
 //DELETE------------------------------------------------------------------------------------
 // 7 functions 1 for each table, will take in the primary key for the row to delete it
+
+//delete external vendor
+app.delete('/delete/external-vendor', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { vendor_id } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM external_vendor WHERE vendor_id = :vendor_id',
+            [vendor_id],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", vendor_id);
+            res.status(201).json({message : "No row with given ID", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in external vendor table with ID: ", vendor_id);
+            res.status(201).json({message : "Deleted External Vendor", result});    //sending back success message
+        }
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+
+// associated JSON
+// { "vendor_id":21 }
+
 
 //delete customer
 app.delete('/delete/customer', async (req, res) => { 
@@ -268,9 +1003,21 @@ app.delete('/delete/customer', async (req, res) => {
             { autocommit: true } 
         ); 
         await req.oracleConnection.commit();
+    
+        console.log(custid);
 
-        console.log("Deleted row in customer table with ID: ", custid);
-        res.status(201).json({message : "Deleted Customer", result});    //sending back success message
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", custid);
+            res.status(201).json({message : "No row with given ID", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in customer table with ID: ", custid);
+            res.status(201).json({message : "Deleted Customer", result});    //sending back success message
+        }
     } 
     catch (error) {
         res.status(500).json({ error : error.message }); //returning a formatted error if required   
