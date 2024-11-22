@@ -957,7 +957,7 @@ app.put('/update/movie', async (req, res) => {
 //DELETE------------------------------------------------------------------------------------
 // 7 functions 1 for each table, will take in the primary key for the row to delete it
 
-//delete external vendor
+//delete external vendor====
 app.delete('/delete/external-vendor', async (req, res) => { 
     try {
         //destructuring the input req params
@@ -974,7 +974,7 @@ app.delete('/delete/external-vendor', async (req, res) => {
         //no rows deleted, ie not a id within the table
         if(result.rowsAffected == 0){
             console.log("No row has ID: ", vendor_id);
-            res.status(201).json({message : "No row with given ID", result}); 
+            res.status(201).json({message : "No row with given ID in External Vendor table", result}); 
         }
         //if a row was deleted, then give the proper response
         else{
@@ -991,31 +991,63 @@ app.delete('/delete/external-vendor', async (req, res) => {
 // { "vendor_id":21 }
 
 
+//delete product
+app.delete('/delete/product', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM product WHERE product_id = :product_id',
+            [product_id],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", product_id);
+            res.status(201).json({message : "No row with given ID in Product table", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in product table with ID: ", product_id);
+            res.status(201).json({message : "Deleted Product", result});    //sending back success message
+        }
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// associated JSON
+// { "product_id":21 }
+
+
 //delete customer
 app.delete('/delete/customer', async (req, res) => { 
     try {
         //destructuring the input req params
-        const { custid } = req.body;
+        const { cust_id } = req.body;
+        console.log(req.body);
         // running the sql command to delete the entry from the table and immediately commit it
         const result = await req.oracleConnection.execute(
-            'DELETE FROM customer WHERE customer_id = :custid',
-            [custid],
+            'DELETE FROM customer WHERE customer_id = :cust_id',
+            [cust_id],
             { autocommit: true } 
         ); 
         await req.oracleConnection.commit();
-    
-        console.log(custid);
 
 
         //Return respective message if any row was deleted or not
         //no rows deleted, ie not a id within the table
         if(result.rowsAffected == 0){
-            console.log("No row has ID: ", custid);
-            res.status(201).json({message : "No row with given ID", result}); 
+            console.log("No row has ID: ", cust_id);
+            res.status(201).json({message : "No row with given ID in Customer table", result}); 
         }
         //if a row was deleted, then give the proper response
         else{
-            console.log("Deleted row in customer table with ID: ", custid);
+            console.log("Deleted row in customer table with ID: ", cust_id);
             res.status(201).json({message : "Deleted Customer", result});    //sending back success message
         }
     } 
@@ -1025,8 +1057,141 @@ app.delete('/delete/customer', async (req, res) => {
 });
 
 // associated JSON
-// { "custid":21 }
+// { "cust_id":21 }
 
+
+//delete review
+app.delete('/delete/review', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { review_id } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM review WHERE review_id = :review_id',
+            [review_id],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", review_id);
+            res.status(201).json({message : "No row with given ID in Review table", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in review table with ID: ", review_id);
+            res.status(201).json({message : "Deleted Review", result});    //sending back success message
+        }
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// associated JSON
+// { "review_id":21 }
+
+
+//delete purchase
+app.delete('/delete/purchase', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { purchase_id } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM purchase WHERE purchase_id = :purchase_id',
+            [purchase_id],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", purchase_id);
+            res.status(201).json({message : "No row with given ID in Purchase table", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in purchase table with ID: ", purchase_id);
+            res.status(201).json({message : "Deleted Purchase", result});    //sending back success message
+        }
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// associated JSON
+// { "purchase_id":21 }
+
+
+//delete music
+//Maybe add a 2ndary delete here aswell to delete the associated product row
+app.delete('/delete/music', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM music WHERE product_id = :product_id',
+            [product_id],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", product_id);
+            res.status(201).json({message : "No row with given ID in Music table", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in music table with ID: ", product_id);
+            res.status(201).json({message : "Deleted Music", result});    //sending back success message
+        }
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// associated JSON
+// { "product_id":21 }
+
+
+//delete movie
+//Maybe add a 2ndary delete here aswell to delete the associated product row
+app.delete('/delete/movie', async (req, res) => { 
+    try {
+        //destructuring the input req params
+        const { product_id } = req.body;
+        // running the sql command to delete the entry from the table and immediately commit it
+        const result = await req.oracleConnection.execute(
+            'DELETE FROM movie WHERE product_id = :product_id',
+            [product_id],
+            { autocommit: true } 
+        ); 
+        await req.oracleConnection.commit();
+
+        //Return respective message if any row was deleted or not
+        //no rows deleted, ie not a id within the table
+        if(result.rowsAffected == 0){
+            console.log("No row has ID: ", product_id);
+            res.status(201).json({message : "No row with given ID in Movie table", result}); 
+        }
+        //if a row was deleted, then give the proper response
+        else{
+            console.log("Deleted row in movie table with ID: ", product_id);
+            res.status(201).json({message : "Deleted Movie", result});    //sending back success message
+        }
+    } 
+    catch (error) {
+        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+    }
+});
+// associated JSON
+// { "product_id":21 }
 
 
 //BACKEND LISTENER=============================================================================
