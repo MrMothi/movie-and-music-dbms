@@ -2,15 +2,46 @@ import React, { useState } from "react";
 
 function PurchaseTableForm() {
   const [action, setAction] = useState("CREATE");
-  const [purchaseId, setPurchaseId] = useState("");
-  const [productId, setProductId] = useState("");
-  const [customerId, setCustomerId] = useState("");
-  const [purchaseDate, setPurchaseDate] = useState("");
+  const [purchase_id, setPurchase_id] = useState("");
+  const [product_id, setProduct_id] = useState("");
+  const [customer_id, setCustomer_id] = useState("");
+  const [purchase_date, setPurchase_date] = useState("");
   const [price, setPrice] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
+    const payload = {
+      purchase_id: parseInt(purchase_id, 10),
+      product_id: parseInt(product_id, 10),
+      customer_id: parseInt(customer_id, 10),
+      purchase_date,
+      price,
+    };
+    console.log(JSON.stringify(payload));
+    const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
+
+    try {
+      const response = await fetch(`/${action.toLowerCase()}/purchase`, {
+        method: method, // Use the dynamic method
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResponseMessage(data.message);
+        setError(null);
+      } else {
+        setError(`Failed to ${action}`);
+        setResponseMessage("");
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+      setError("An error occurred");
+      setResponseMessage("");
+    }
   };
 
   return (
@@ -27,29 +58,29 @@ function PurchaseTableForm() {
         <label>Purchase ID:</label>
         <input
           type="text"
-          onChange={(e) => setPurchaseId(e.target.value)}
-          value={purchaseId}
+          onChange={(e) => setPurchase_id(e.target.value)}
+          value={purchase_id}
         />
 
         <label>Product ID:</label>
         <input
           type="text"
-          onChange={(e) => setProductId(e.target.value)}
-          value={productId}
+          onChange={(e) => setProduct_id(e.target.value)}
+          value={product_id}
         />
 
         <label>Customer ID:</label>
         <input
           type="text"
-          onChange={(e) => setCustomerId(e.target.value)}
-          value={customerId}
+          onChange={(e) => setCustomer_id(e.target.value)}
+          value={customer_id}
         />
 
         <label>Purchase Date:</label>
         <input
           type="date"
-          onChange={(e) => setPurchaseDate(e.target.value)}
-          value={purchaseDate}
+          onChange={(e) => setPurchase_date(e.target.value)}
+          value={purchase_date}
         />
 
         <label>Price:</label>

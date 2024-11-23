@@ -2,16 +2,50 @@ import React, { useState } from "react";
 
 function CustomerTableForm() {
   const [action, setAction] = useState("CREATE");
-  const [custId, setCustId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [custid, setCustid] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
   const [address, setAddress] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
+    const payload = {
+      custid: parseInt(custid, 10),
+      firstname,
+      lastname,
+      email,
+      phonenumber,
+      address,
+    };
+    console.log(JSON.stringify(payload));
+    const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
+
+    try {
+      const response = await fetch(`/${action.toLowerCase()}/customer`, {
+        method: method, // Use the dynamic method
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResponseMessage(data.message);
+        setError(null);
+      } else {
+        setError(`Failed to ${action}`);
+        setResponseMessage("");
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+      setError("An error occurred");
+      setResponseMessage("");
+    }
   };
 
   return (
@@ -28,22 +62,22 @@ function CustomerTableForm() {
         <label>Customer ID:</label>
         <input
           type="text"
-          onChange={(e) => setCustId(e.target.value)}
-          value={custId}
+          onChange={(e) => setCustid(e.target.value)}
+          value={custid}
         />
 
         <label>First Name:</label>
         <input
           type="text"
-          onChange={(e) => setFirstName(e.target.value)}
-          value={firstName}
+          onChange={(e) => setFirstname(e.target.value)}
+          value={firstname}
         />
 
         <label>Last Name:</label>
         <input
           type="text"
-          onChange={(e) => setLastName(e.target.value)}
-          value={lastName}
+          onChange={(e) => setLastname(e.target.value)}
+          value={lastname}
         />
 
         <label>Email:</label>
@@ -56,8 +90,8 @@ function CustomerTableForm() {
         <label>Phone Number:</label>
         <input
           type="text"
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          value={phoneNumber}
+          onChange={(e) => setPhonenumber(e.target.value)}
+          value={phonenumber}
         />
 
         <label>Address:</label>
@@ -69,6 +103,8 @@ function CustomerTableForm() {
 
         <button type="submit">Submit</button>
       </form>
+
+      {responseMessage && <p>{responseMessage}</p>}
     </div>
   );
 }

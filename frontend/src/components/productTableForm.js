@@ -2,15 +2,46 @@ import React, { useState } from "react";
 
 function ProductTableForm() {
   const [action, setAction] = useState("CREATE");
-  const [productId, setProductId] = useState("");
-  const [productType, setProductType] = useState("");
+  const [productid, setProductid] = useState("");
+  const [producttype, setProducttype] = useState("");
   const [rating, setRating] = useState("");
   const [price, setPrice] = useState("");
-  const [vendorId, setVendorId] = useState("");
+  const [vendorid, setVendorid] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
+    const payload = {
+      productid: parseInt(productid, 10),
+      producttype,
+      rating,
+      price,
+      vendorid,
+    };
+    console.log(JSON.stringify(payload));
+    const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
+
+    try {
+      const response = await fetch(`/${action.toLowerCase()}/product`, {
+        method: method, // Use the dynamic method
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResponseMessage(data.message);
+        setError(null);
+      } else {
+        setError(`Failed to ${action}`);
+        setResponseMessage("");
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+      setError("An error occurred");
+      setResponseMessage("");
+    }
   };
 
   return (
@@ -24,18 +55,18 @@ function ProductTableForm() {
           <option value="UPDATE">UPDATE</option>
         </select>
 
-        <label>Product_ID:</label>
+        <label>Product ID:</label>
         <input
           type="text"
-          onChange={(e) => setProductId(e.target.value)}
-          value={productId}
+          onChange={(e) => setProductid(e.target.value)}
+          value={productid}
         />
 
-        <label>Product_Type:</label>
+        <label>Product Type:</label>
         <input
           type="text"
-          onChange={(e) => setProductType(e.target.value)}
-          value={productType}
+          onChange={(e) => setProducttype(e.target.value)}
+          value={producttype}
         />
 
         <label>Rating:</label>
@@ -52,11 +83,11 @@ function ProductTableForm() {
           value={price}
         />
 
-        <label>Vendor_ID:</label>
+        <label>Vendor ID:</label>
         <input
           type="text"
-          onChange={(e) => setVendorId(e.target.value)}
-          value={vendorId}
+          onChange={(e) => setVendorid(e.target.value)}
+          value={vendorid}
         />
 
         <button type="submit">Submit</button>

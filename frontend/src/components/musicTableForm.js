@@ -2,16 +2,48 @@ import React, { useState } from "react";
 
 function MusicTableForm() {
   const [action, setAction] = useState("CREATE");
-  const [productId, setProductId] = useState("");
+  const [product_id, setProduct_id] = useState("");
   const [title, setTitle] = useState("");
   const [genre, setGenre] = useState("");
   const [artist, setArtist] = useState("");
   const [features, setFeatures] = useState("");
   const [album, setAlbum] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
+    const payload = {
+      product_id: parseInt(product_id, 10),
+      title,
+      genre,
+      artist,
+      features,
+      album,
+    };
+    console.log(JSON.stringify(payload));
+    const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
+
+    try {
+      const response = await fetch(`/${action.toLowerCase()}/music`, {
+        method: method, // Use the dynamic method
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResponseMessage(data.message);
+        setError(null);
+      } else {
+        setError(`Failed to ${action}`);
+        setResponseMessage("");
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+      setError("An error occurred");
+      setResponseMessage("");
+    }
   };
 
   return (
@@ -28,8 +60,8 @@ function MusicTableForm() {
         <label>Product ID:</label>
         <input
           type="text"
-          onChange={(e) => setProductId(e.target.value)}
-          value={productId}
+          onChange={(e) => setProduct_id(e.target.value)}
+          value={product_id}
         />
 
         <label>Title:</label>
