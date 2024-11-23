@@ -8,9 +8,11 @@ function CustomerTableForm() {
   const [email, setEmail] = useState("");
   const [phonenumber, setPhonenumber] = useState("");
   const [address, setAddress] = useState("");
+  // response and error message for feedback once
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
 
+  // fetch our backend when user submits
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -33,6 +35,7 @@ function CustomerTableForm() {
         body: JSON.stringify(payload),
       });
 
+      // set response/error
       if (response.ok) {
         const data = await response.json();
         setResponseMessage(data.message);
@@ -48,6 +51,7 @@ function CustomerTableForm() {
     }
   };
 
+  // user form for creating or updating a record in customer table
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>

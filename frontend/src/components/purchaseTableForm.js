@@ -7,8 +7,11 @@ function PurchaseTableForm() {
   const [customer_id, setCustomer_id] = useState("");
   const [purchase_date, setPurchase_date] = useState("");
   const [price, setPrice] = useState("");
+  // error and response message for form feedback
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
+
+  // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -21,6 +24,7 @@ function PurchaseTableForm() {
     console.log(JSON.stringify(payload));
     const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
 
+    // fetch backend to create/update record
     try {
       const response = await fetch(`/${action.toLowerCase()}/purchase`, {
         method: method, // Use the dynamic method
@@ -30,6 +34,7 @@ function PurchaseTableForm() {
         body: JSON.stringify(payload),
       });
 
+      // set reponse and error
       if (response.ok) {
         const data = await response.json();
         setResponseMessage(data.message);
@@ -45,6 +50,7 @@ function PurchaseTableForm() {
     }
   };
 
+  // form
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>

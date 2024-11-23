@@ -10,6 +10,8 @@ function ReviewTableForm() {
   const [user_rating, setUser_rating] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
+
+  // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -23,6 +25,7 @@ function ReviewTableForm() {
     console.log(JSON.stringify(payload));
     const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
 
+    // fetch backend to create/update and set error/response message
     try {
       const response = await fetch(`/${action.toLowerCase()}/review`, {
         method: method, // Use the dynamic method

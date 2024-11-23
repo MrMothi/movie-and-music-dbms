@@ -6,9 +6,11 @@ function MovieTableForm() {
   const [title, setTitle] = useState("");
   const [genre, setGenre] = useState("");
   const [director, setDirector] = useState("");
+  // response and error for user feedback
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
 
+  // fetch backend on submission of form
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -29,6 +31,7 @@ function MovieTableForm() {
         body: JSON.stringify(payload),
       });
 
+      // set response and error messages
       if (response.ok) {
         const data = await response.json();
         setResponseMessage(data.message);
@@ -44,6 +47,7 @@ function MovieTableForm() {
     }
   };
 
+  // input form
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>
@@ -85,6 +89,7 @@ function MovieTableForm() {
 
         <button type="submit">Submit</button>
       </form>
+
       {responseMessage && <p>{responseMessage}</p>}
       {error && <p>{error}</p>}
     </div>

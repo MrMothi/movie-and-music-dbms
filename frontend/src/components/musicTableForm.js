@@ -8,8 +8,11 @@ function MusicTableForm() {
   const [artist, setArtist] = useState("");
   const [features, setFeatures] = useState("");
   const [album, setAlbum] = useState("");
+  // response and error for user feedback
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
+
+  // handle submission of form
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -23,6 +26,7 @@ function MusicTableForm() {
     console.log(JSON.stringify(payload));
     const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
 
+    // fetch backend to make request
     try {
       const response = await fetch(`/${action.toLowerCase()}/music`, {
         method: method, // Use the dynamic method
@@ -32,6 +36,7 @@ function MusicTableForm() {
         body: JSON.stringify(payload),
       });
 
+      // set response/error
       if (response.ok) {
         const data = await response.json();
         setResponseMessage(data.message);

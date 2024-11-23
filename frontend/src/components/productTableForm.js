@@ -9,6 +9,8 @@ function ProductTableForm() {
   const [vendorid, setVendorid] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
+
+  // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -21,6 +23,7 @@ function ProductTableForm() {
     console.log(JSON.stringify(payload));
     const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
 
+    // send request to backend to create or update record
     try {
       const response = await fetch(`/${action.toLowerCase()}/product`, {
         method: method, // Use the dynamic method
@@ -30,6 +33,7 @@ function ProductTableForm() {
         body: JSON.stringify(payload),
       });
 
+      // set response and error message
       if (response.ok) {
         const data = await response.json();
         setResponseMessage(data.message);
@@ -45,6 +49,7 @@ function ProductTableForm() {
     }
   };
 
+  // form
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>

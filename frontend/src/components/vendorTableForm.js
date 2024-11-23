@@ -8,6 +8,8 @@ function VendorTableForm() {
   const [contactemail, setContactemail] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
+
+  // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -19,6 +21,7 @@ function VendorTableForm() {
     console.log(JSON.stringify(payload));
     const method = action === "CREATE" ? "POST" : "PUT"; // Set method based on action
 
+    // fetch backend and create/update record, set error/response message for feedback
     try {
       const response = await fetch(`/${action.toLowerCase()}/external-vendor`, {
         method: method, // Use the dynamic method
@@ -42,6 +45,8 @@ function VendorTableForm() {
       setResponseMessage("");
     }
   };
+
+  // create/update form
   return (
     <div className="formContainer">
       <form className="tableForm" onSubmit={handleSubmit}>
