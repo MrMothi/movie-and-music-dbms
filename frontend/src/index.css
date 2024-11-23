@@ -43,3 +43,108 @@ body {
   background-color: #f4f4f4; /* Light grey */
   color: #333; /* Dark grey for text */
 }
+
+/* Style the select dropdown */
+select {
+  appearance: none; /* Remove default arrow in most browsers */
+  -moz-appearance: none; /* Remove default arrow in Firefox */
+  -webkit-appearance: none; /* Remove default arrow in Safari */
+
+  width: 100%; /* Full width, adjust as needed */
+  padding: 10px 15px;
+  margin: 5px 0;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  background-color: #f9f9f9;
+  background-image: linear-gradient(45deg, transparent 50%, #000 50%),
+    linear-gradient(135deg, #000 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(1em), calc(100% - 15px) calc(1em);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+
+  font-size: 16px;
+  color: #333;
+
+  outline: none;
+  cursor: pointer;
+
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover and focus states for the select */
+select:hover {
+  border-color: #999;
+}
+
+select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Style the dropdown options */
+select option {
+  padding: 10px;
+  color: #333;
+  background: #fff;
+
+  /* Ensure the text is not cut off */
+  white-space: nowrap;
+}
+
+select option:hover {
+  background: #f1f1f1; /* Highlight hovered option */
+}
+
+textarea {
+  width: 100%; /* Full width, adjust as needed */
+  padding: 10px 15px;
+  margin: 5px 0;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  background-color: #f9f9f9;
+
+  font-size: 16px;
+  color: #333;
+
+  outline: none;
+  box-sizing: border-box; /* Prevent padding from affecting width */
+
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover and focus states for the input */
+input:hover,
+textarea:hover {
+  border-color: #999;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Disabled state */
+input:disabled,
+textarea:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Textarea styling */
+textarea {
+  resize: vertical; /* Allow vertical resizing */
+  min-height: 80px; /* Ensure sufficient height */
+}

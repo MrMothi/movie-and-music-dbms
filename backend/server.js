@@ -199,19 +199,27 @@ app.get('/get/product', async (req, res) => {
 
 //get customer table
 //original function
-app.get('/get/customer', async (req, res) => { 
-    try{
-        // console.log(req.oracleConnection)
-        const result = await req.oracleConnection.execute('SELECT * FROM customer'); 
-        // const result = await app.locals.oracleConnection.execute('SELECT * FROM customer');    //if using app locals variable
-        console.log("RESULT ROWS",result.rows); // can comment out later
-        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
-        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
-    } 
-    catch (error) {
-        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+app.post('/get/customer', async (req, res) => {
+    const { customerId } = req.body;
+  
+    try {
+      const query = `SELECT * FROM customer WHERE customer_id = :customerId`;
+      const result = await req.oracleConnection.execute(query, [customerId]);
+  
+      // Extract column headers and rows
+      const headers = result.metaData.map((col) => col.name);
+      const rows = result.rows;
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Customer not found" });
+      }
+  
+      res.json({ headers, rows: rows[0] }); // Send headers and single row
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-});
+  });
+  
 
 
 //get review table
@@ -227,19 +235,25 @@ app.get('/get/review', async (req, res) => {
     }
 });
 
-
-//get purchase table
-app.get('/get/purchase', async (req, res) => { 
-    try{
-        const result = await req.oracleConnection.execute('SELECT * FROM purchase'); 
-        // console.log("RESULT ROWS",result.rows);
-        const resultRows = result.rows;   //getting the rows of the result, since other stuff is uneccesary
-        res.json(resultRows);    //sending back the results in json format, using the res object json function (from express middleware)
-    } 
-    catch (error) {
-        res.status(500).json({ error : error.message }); //returning a formatted error if required   
+//hard coded to take a cust ID in
+app.post('/get/purchase', async (req, res) => {
+    const { customerId } = req.body; // Get the customerId from the request body
+  
+    try {
+      const query = `SELECT * FROM purchase WHERE customer_id = :customerId`;
+      const result = await req.oracleConnection.execute(query, [customerId]);
+  
+      // Extract column headers from metadata
+      const headers = result.metaData.map((col) => col.name);
+      const rows = result.rows;
+  
+      // Send both headers and rows in the response
+      res.json({ headers, rows });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-});
+  });
+  
 
 
 //get music table
