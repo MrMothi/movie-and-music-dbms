@@ -35,7 +35,7 @@ const QueryForm = () => {
       setError('An error occurred while executing the query.');
       setQueryJson(null); // Clear previous results on error
     }
-
+ 
   };
 
   return (
