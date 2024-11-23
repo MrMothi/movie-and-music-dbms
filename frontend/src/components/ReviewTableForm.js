@@ -8,7 +8,8 @@ function ReviewTableForm() {
   const [creation_date, setCreation_date] = useState("");
   const [user_review, setUser_review] = useState("");
   const [user_rating, setUser_rating] = useState("");
-
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -80,7 +81,7 @@ function ReviewTableForm() {
 
         <label>Creation Date:</label>
         <input
-          type="date"
+          type="text"
           onChange={(e) => setCreation_date(e.target.value)}
           value={creation_date}
         />

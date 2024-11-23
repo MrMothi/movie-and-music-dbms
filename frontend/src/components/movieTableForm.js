@@ -6,6 +6,8 @@ function MovieTableForm() {
   const [title, setTitle] = useState("");
   const [genre, setGenre] = useState("");
   const [director, setDirector] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

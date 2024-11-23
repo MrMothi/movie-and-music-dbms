@@ -7,7 +7,8 @@ function ProductTableForm() {
   const [rating, setRating] = useState("");
   const [price, setPrice] = useState("");
   const [vendorid, setVendorid] = useState("");
-
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {

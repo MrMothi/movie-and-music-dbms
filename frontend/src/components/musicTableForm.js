@@ -8,7 +8,8 @@ function MusicTableForm() {
   const [artist, setArtist] = useState("");
   const [features, setFeatures] = useState("");
   const [album, setAlbum] = useState("");
-
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {

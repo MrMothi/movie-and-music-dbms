@@ -6,7 +6,8 @@ function VendorTableForm() {
   const [vendorname, setVendorname] = useState("");
   const [vendornumber, setVendornumber] = useState("");
   const [contactemail, setContactemail] = useState("");
-
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {

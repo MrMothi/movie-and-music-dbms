@@ -7,7 +7,8 @@ function PurchaseTableForm() {
   const [customer_id, setCustomer_id] = useState("");
   const [purchase_date, setPurchase_date] = useState("");
   const [price, setPrice] = useState("");
-
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -78,7 +79,7 @@ function PurchaseTableForm() {
 
         <label>Purchase Date:</label>
         <input
-          type="date"
+          type="text"
           onChange={(e) => setPurchase_date(e.target.value)}
           value={purchase_date}
         />
