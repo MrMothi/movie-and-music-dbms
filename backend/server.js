@@ -72,40 +72,85 @@ process.once('SIGTERM', closeOracleConnection).once('SIGINT', closeOracleConnect
 
 
 //default server backend page
-app.get('/', (req, res) => {
-    res.send('Movie and Music DBMS')
-})
-
 app.post('/api/query', async (req, res) => {
     const { query } = req.body;
     console.log('Received query:', query);
 
+    //Make sure we have a query
     if (!query) {
         return res.status(400).json({ error: 'Query is required' });
     }
 
     try {
-        // Execute the SQL query
-        const result = await oracleDBconnection.execute(query);
+        // Handle DROP VIEW queries
+        if (query.trim().toUpperCase().startsWith("DROP VIEW")) {
+            const viewNameMatch = query.match(/DROP\s+VIEW\s+(\w+)/i);
+            const viewName = viewNameMatch ? viewNameMatch[1] : null;
 
-        // Extract headers (column names) from the metadata
-        const headers = result.metaData.map((col) => col.name);
+            if (viewName) {
+                // Execute the DROP VIEW query
+                const result = await oracleDBconnection.execute(query, [], { autoCommit: true });
 
-        // Format rows as an array of objects with header-value pairs
-        const rows = result.rows.map((row) => {
-            return row.reduce((acc, value, index) => {
-                acc[headers[index]] = value;
-                return acc;
-            }, {});
+                // Return the success message after dropping the view
+                return res.json({
+                    message: `View '${viewName}' dropped successfully.`,
+                    rowsAffected: result.rowsAffected || 0
+                });
+            } else {
+                return res.status(400).json({ error: 'View name not found in query.' });
+            }
+        }
+
+        // Execute other types of SQL queries (e.g., SELECT, CREATE VIEW)
+        const result = await oracleDBconnection.execute(query, [], { autoCommit: true });
+
+        // Check if rows exist in the result (for SELECT queries)
+        if (result.rows && result.rows.length > 0) {
+            const headers = result.metaData.map((col) => col.name);
+            const rows = result.rows.map((row) => {
+                return row.reduce((acc, value, index) => {
+                    acc[headers[index]] = value;
+                    return acc;
+                }, {});
+            });
+
+            return res.json({ headers, rows });
+        }
+
+        // Handle cases like CREATE VIEW or DML queries
+        if (query.trim().toUpperCase().startsWith("CREATE VIEW")) {
+            const viewNameMatch = query.match(/CREATE\s+VIEW\s+(\w+)/i);
+            const viewName = viewNameMatch ? viewNameMatch[1] : null;
+
+            if (viewName) {
+                //Run the query associated with the view
+                const viewResult = await oracleDBconnection.execute(`SELECT * FROM ${viewName}`);
+                const headers = viewResult.metaData.map((col) => col.name);
+                const rows = viewResult.rows.map((row) => {
+                    return row.reduce((acc, value, index) => {
+                        acc[headers[index]] = value;
+                        return acc;
+                    }, {});
+                });
+
+                return res.json({ headers, rows });
+            } else {
+                return res.json({ message: "View created successfully, but no data to display." });
+            }
+        }
+
+        // Default response for non-returning queries (e.g., UPDATE, INSERT)
+        return res.json({
+            message: "Query executed successfully.",
+            rowsAffected: result.rowsAffected || 0,
         });
 
-        // Send the response with headers and rows
-        res.json({ headers, rows });
     } catch (error) {
         console.error('Error executing query:', error);
         res.status(500).json({ error: 'Failed to execute query' });
     }
 });
+
 
 
 
