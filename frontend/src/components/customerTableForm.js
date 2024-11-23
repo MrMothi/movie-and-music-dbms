@@ -105,6 +105,7 @@ function CustomerTableForm() {
       </form>
 
       {responseMessage && <p>{responseMessage}</p>}
+      {error && <p>{error}</p>}
     </div>
   );
 }

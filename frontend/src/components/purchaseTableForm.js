@@ -94,6 +94,8 @@ function PurchaseTableForm() {
 
         <button type="submit">Submit</button>
       </form>
+      {responseMessage && <p>{responseMessage}</p>}
+      {error && <p>{error}</p>}
     </div>
   );
 }

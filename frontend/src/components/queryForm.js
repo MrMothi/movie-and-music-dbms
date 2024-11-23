@@ -42,6 +42,7 @@ const QueryForm = () => {
  
   };
 
+  //every button will auto fill our input field with the query when pressed
   return (
     <div>
 
@@ -49,7 +50,7 @@ const QueryForm = () => {
 SET rating = (SELECT REVIEW_NUMBERS.rating_average
               FROM REVIEW_NUMBERS
               WHERE PRODUCT.product_id = REVIEW_NUMBERS.product_id)`)}
-      >Update the blah blah</button>
+      >Update the Product table review column</button>
 
       <button onClick={() => handleAutoFill(`SELECT 
     P.product_id,
