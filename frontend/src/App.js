@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import AdminHome from "./pages/AdminHomePage";
 import UserHome from "./pages/UserHomePage";
 import Navbar from "./components/Navbar";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Login />}></Route>
           <Route path="/admin" element={<AdminHome />}></Route>
           <Route path="/user" element={<UserHome />}></Route>
+          <Route path="/search" element={<SearchPage />}></Route>
         </Routes>
       </div>
     </Router>

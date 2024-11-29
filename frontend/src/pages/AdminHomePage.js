@@ -7,6 +7,7 @@ import ReviewTableForm from "../components/ReviewTableForm";
 import MusicTableForm from "../components/musicTableForm";
 import MovieTableForm from "../components/movieTableForm";
 import QueryForm from "../components/queryForm";
+import { Link } from "react-router-dom";
 
 function AdminHomePage() {
   const [selectedTable, setSelectedTable] = useState("");
@@ -14,6 +15,7 @@ function AdminHomePage() {
   return (
     <div>
       <h1>Welcome Admin</h1>
+      <Link to="/search">Search/Query Table</Link>
       <div className="formsContainer">
         <select
           value={selectedTable}
@@ -29,6 +31,7 @@ function AdminHomePage() {
           <option value="MUSIC">MUSIC</option>
           <option value="MOVIE">MOVIE</option>
         </select>
+
         {selectedTable === "CUSTOMER" && <CustomerTableForm />}
         {selectedTable === "PRODUCT" && <ProductTableForm />}
         {selectedTable === "VENDOR" && <VendorTableForm />}
@@ -37,6 +40,7 @@ function AdminHomePage() {
         {selectedTable === "MUSIC" && <MusicTableForm />}
         {selectedTable === "MOVIE" && <MovieTableForm />}
       </div>
+
       <div>
         <br></br>
         <br></br>
